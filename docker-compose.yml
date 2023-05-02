@@ -1,0 +1,30 @@
+version: '3.8'
+
+networks:
+  cl_net_overlay:
+    driver: bridge
+    external: true
+
+services:
+  webhook-client:
+    container_name: webhook-client
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./test_w_sentry:/app
+    ports:
+      - "8081:8081"
+    networks:
+      - cl_net_overlay
+
+  
+  test-webhook-sentry:
+    image: juggernaut/webhook-sentry:latest
+    container_name: "test-webhook-sentry"
+    volumes:
+    - ./config.yaml:/app/config.yaml
+
+    command: /webhook-sentry config.yaml
+    networks:
+      - cl_net_overlay
